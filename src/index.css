@@ -11,3 +11,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.nav-item {
+  padding-right: 10px;
+  margin-right: 8px;
+}
+
+.navbar-nav {
+  float: right;
+}
+
+.card {
+  /* height: 200px;
+  width: 33%; */
+
+}
+
+.yellow-bg {
+  background-color: antiquewhite;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
