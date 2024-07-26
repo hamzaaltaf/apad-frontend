@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
+    
+    const navigate = useNavigate();
+    const server_url = 'http://localhost:5000'
+    const api_url = '/auth/v1/users/sign_in'
     const [form_data, set_form_data] = React.useState({
-        'name': "",
         'email': "",
         'password':"",
-        'confirm_password': ""
     })
 
     function handle_change(event) {
@@ -19,31 +22,47 @@ export default function Login() {
         })
     }
 
-    function create_user() {
+    function login_user(event) {
+        event.preventDefault();
+        fetch(`${server_url}/${api_url}`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: form_data['email'],
+                password: form_data['password'],
+            })
+        }).then(res => {
+            if (!res.ok) {
+                throw new Error("API has thrown an error")
+            }
+            alert("Logged in Successfully")
+            return res.json()
+        }).then(() => {
+            // Redirect to the login page
+            navigate('/projects');
+        })
         
     }
 
     return(
         <center>
-            <h2>Sign Up Form</h2>
+            <h2>Login Form</h2>
             <div className='container'>
                 <div className='row yellow-bg'>
                 
                     <form>
                         <div className='col-md-6 col-lg-6 col-sm-6'>
-                            <label><strong>Name: </strong></label>
-                            <input className='form-control' name='name' id='email' value={handle_change}></input>
+                            <label><strong>Email: </strong></label>
+                            <input className='form-control' name='email' id='email' value={form_data.email} onChange={handle_change} />
                         </div>
                         <div className='col-md-6 col-lg-6 col-sm-6'>
-                            <label><strong>Email: </strong></label>
-                            <input className='form-control' name='email' id='email' value={handle_change}></input>
+                            <label><strong>Password: </strong></label>
+                            <input type='password' className='form-control' name='password' id='password' value={form_data.password} onChange={handle_change}/>
                         </div>
-                        <div className='col-md-6 col-lg-6 col-sm-6'>
-                            <label><strong>Email: </strong></label>
-                            <input className='form-control' name='email' id='email' value={handle_change}></input>
-                        </div>
-
-                        <input type="submit" onClick={create_user}>Sign Up</input>
+                        <br/>
+                        <input className='btn btn-primary' type="submit" onClick={login_user} />
                     </form>
                 </div>
             </div>

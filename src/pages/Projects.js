@@ -3,10 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from '../components/Card'
 
 
-export default function Home() {
+export default function Projects() {
     return(<div>
-        <center>
-            <h1 className='center_all_the_way'>This is Homepage</h1>
-        </center>
+        <h1>Projects Page After Login</h1>    
     </div>)
 }
