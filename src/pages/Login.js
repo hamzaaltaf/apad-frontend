@@ -37,13 +37,17 @@ export default function Login() {
             if (!res.ok) {
                 throw new Error("API has thrown an error")
             }
-            alert("Logged in Successfully")
             return res.json()
-        }).then(() => {
-            // Redirect to the login page
-            navigate('/projects');
+        }).then(response => {
+            if (response.success == false) {
+                alert("Logged in failed")
+            } else {
+                alert("Logged in Successfully")
+                localStorage.setItem('user_id', response.id);
+                // Redirect to the login page
+                navigate('/projects');
+            }
         })
-        
     }
 
     return(
