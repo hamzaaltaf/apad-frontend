@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Card from '../components/Card'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 
 
 export default function Projects() {
@@ -12,7 +12,6 @@ export default function Projects() {
     const api_url = `users/create_project`
     const [projects, set_projects] = React.useState([])
     const [project_created, set_project_created] = React.useState(false)
-    
     const [form_data, set_form_data] = React.useState(
         {
         'name': "",
@@ -20,6 +19,15 @@ export default function Projects() {
         'projectId':"",
         }
     )
+    /* Code related to check in and check out modal*/
+    const [showCheckIn, setShowCheckIn] = React.useState(false);
+    const [showCheckOut, setShowCheckOut] = React.useState(false);
+
+    const handleShowCheckIn = () => setShowCheckIn(true);
+    const handleCloseCheckIn = () => setShowCheckIn(false);
+
+    const handleShowCheckOut = () => setShowCheckOut(true);
+    const handleCloseCheckOut = () => setShowCheckOut(false);
 
     
 
@@ -33,7 +41,10 @@ export default function Projects() {
     };
 
     React.useEffect(() => {
-        fetch('http://localhost:5000/users/list_projects', {
+        if (!user_id) {
+            navigate('/login')
+        } else {
+            fetch('http://localhost:5000/users/list_projects', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -45,6 +56,8 @@ export default function Projects() {
         .then(res => {
             if (!res.ok) {
                 alert("Request failed")
+                navigate('/login');
+                
             } else {
                 return res.json()
             }
@@ -53,16 +66,18 @@ export default function Projects() {
                 set_projects((prev_projects) => res.projects)
                 // console.log("here are projects", projects)
             } else {
-                alert("Request failed")
+                navigate('/login');
+                alert("Your session expired. Please login again")
             }
         })
+        }
+        
     }, [project_created])
     
 
     function create_project(event) {
         event.preventDefault();
         const form = event.target
-        alert('Username', form.name.value)
         fetch(`${server_url}/${api_url}`, {
             method: "POST",
             headers: {
@@ -137,13 +152,14 @@ export default function Projects() {
         <div className='container'>
             <div className='row'>
                 <h1>Projects</h1>
-                {projects.length > 1 ? (
+                {projects.length > 0 ? (
                     <table className='table table-bordered'>
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Description</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -152,6 +168,11 @@ export default function Projects() {
                                     <td>{project.pid}</td>
                                     <td>{project.name}</td>
                                     <td>{project.description}</td>
+                                    <td>
+                                        <Link to={`/project/${project.pid}/members`} className='btn btn-warning'>Members</Link>
+                                        <Link to={`/project/${project.pid}/${'check_in'}`} className='btn btn-danger'>Check In</Link>
+                                        <Link to={`/project/${project.pid}/${'check_out'}`} className='btn btn-primary'>Check Out</Link>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
