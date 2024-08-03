@@ -14,28 +14,33 @@ import Signup from './pages/Signup';
 import Projects from './pages/Projects';
 import ProjectMembers from './pages/ProjectMembers';
 import HardwareSets from './pages/HardwareSets';
-
+import Transactions from './pages/Transactions';
+import { AuthProvider } from './contexts/AuthContext';
 
 
 const ServerContext = React.createContext()
 function App() {
+  const user_id = localStorage.getItem('user_id')
   const server_url = 'http://localhost:5000'
   return (
     
     <BrowserRouter>
-      <Navbar/>
-      <ServerContext.Provider value={server_url}>
-        <Routes>
-          <Route path="/" element={<Home/>}></Route>
-          <Route path="/about" element={<About/>}></Route>
-          <Route path="/login" element={<Login/>}></Route>
-          <Route path="/signup" element={<Signup/>}></Route>
-          <Route path="/projects" element={<Projects/>}></Route>
-          <Route path="/project/:id/members" element={<ProjectMembers/>}></Route>
-          <Route path="/project/:id/:action_type" element={<HardwareSets/>}></Route>
-          <Route path="/project/:id/:action_type" element={<HardwareSets/>}></Route>
-        </Routes>
-      </ServerContext.Provider>
+      <AuthProvider>
+        <Navbar/>
+        <ServerContext.Provider value={server_url}>
+          <Routes>
+            <Route path="/" element={<Home/>}></Route>
+            <Route path="/about" element={<About/>}></Route>
+            <Route path="/login" element={<Login/>}></Route>
+            <Route path="/signup" element={<Signup/>}></Route>
+            <Route path="/projects" element={<Projects/>}></Route>
+            <Route path="/project/:id/members" element={<ProjectMembers/>}></Route>
+            <Route path="/project/:id/:action_type" element={<HardwareSets/>}></Route>
+            <Route path="/project/:id/:action_type" element={<HardwareSets/>}></Route>
+            <Route path="/project/:id/transactions" element={<Transactions/>}></Route>
+          </Routes>
+        </ServerContext.Provider>
+      </AuthProvider>
     </BrowserRouter>
     
   );

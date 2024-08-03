@@ -55,10 +55,10 @@ export default function Signup() {
 
     return(
         <center>
-            <h2>Sign Up Form</h2>
+            
             <div className='container'>
                 <div className='row yellow-bg'>
-                
+                    <h2>Sign Up Form</h2>
                     <form>
                         <div className='col-md-6 col-lg-6 col-sm-6'>
                             <label><strong>Name: </strong></label>
@@ -101,7 +101,8 @@ export default function Signup() {
                                 onChange = {handle_change}
                             />
                         </div>
-
+                        <br/>
+                        <br/>
                         <input className='btn btn-primary' type="submit" onClick={create_user} onChange = {handle_change}/>
                     </form>
                 </div>

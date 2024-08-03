@@ -204,3 +204,6 @@ a:focus {
 .btn {
   margin-left: 1em;
 }
+.bg-success {
+  background-color: "#5cb85c";
+}

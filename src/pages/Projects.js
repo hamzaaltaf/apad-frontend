@@ -12,6 +12,9 @@ export default function Projects() {
     const api_url = `users/create_project`
     const [projects, set_projects] = React.useState([])
     const [project_created, set_project_created] = React.useState(false)
+    const [join_project_form, set_join_project_form] = React.useState({
+        'project_id': ""
+    })
     const [form_data, set_form_data] = React.useState(
         {
         'name': "",
@@ -19,15 +22,8 @@ export default function Projects() {
         'projectId':"",
         }
     )
-    /* Code related to check in and check out modal*/
-    const [showCheckIn, setShowCheckIn] = React.useState(false);
-    const [showCheckOut, setShowCheckOut] = React.useState(false);
-
-    const handleShowCheckIn = () => setShowCheckIn(true);
-    const handleCloseCheckIn = () => setShowCheckIn(false);
-
-    const handleShowCheckOut = () => setShowCheckOut(true);
-    const handleCloseCheckOut = () => setShowCheckOut(false);
+    // In order to show error and success messages
+    const [alertInfo, setAlertInfo] = React.useState({ show: false, message: "", type: "" });
 
     
 
@@ -39,6 +35,17 @@ export default function Projects() {
           [name]: value
         }));
     };
+
+    function handle_change_for_join_project(event) {
+        const { name, value } = event.target;
+        const form = event.target
+        set_join_project_form((prev_data) => ({
+          ...prev_data,
+          [name]: value
+        }));
+    }
+
+
 
     React.useEffect(() => {
         if (!user_id) {
@@ -64,10 +71,8 @@ export default function Projects() {
         }).then((res) => {
             if (res && (res.success == true)) {
                 set_projects((prev_projects) => res.projects)
-                // console.log("here are projects", projects)
             } else {
-                navigate('/login');
-                alert("Your session expired. Please login again")
+                setAlertInfo({ show: true, message: res.errors, type: "danger" });
             }
         })
         }
@@ -75,6 +80,35 @@ export default function Projects() {
     }, [project_created])
     
 
+    // Join a project using a project ID.
+    function join_project(event) {
+        event.preventDefault();
+        const form = event.target
+        fetch(`${server_url}/projects/join_project`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                project_id: join_project_form['project_id'],
+                user_id: user_id
+            })
+        }).then(res => {
+            if (!res.ok) {
+                throw new Error("API has thrown an error")
+            }
+            return res.json()
+        }).then((response) => {
+            console.log(response)
+            if (response.success == false) {
+                setAlertInfo({ show: true, message: response.errors, type: "danger" });
+            } else {
+                set_project_created(prev_created => !project_created)
+                
+            }
+        })
+    }
+    
     function create_project(event) {
         event.preventDefault();
         const form = event.target
@@ -107,48 +141,74 @@ export default function Projects() {
 
     return(
         <div>
-        <center>
-            <h2>Create a new project</h2>
+        
+            
             <div className='container'>
+            {alertInfo.show && (
+                    <div className={`alert alert-${alertInfo.type} alert-dismissible fade show`} role="alert">
+                    {alertInfo.message}
+                    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                )}
                 <div className='row yellow-bg'>
-                
-                    <form>
-                        <div className='col-md-6 col-lg-6 col-sm-6'>
-                            <label><strong>Name: </strong></label>
-                            <input 
-                                className='form-control' 
-                                name='name'
-                                id='name'
-                                value={form_data.name}
-                                onChange = {handle_change} 
-                            />
-                        </div>
 
-                        <div className='col-md-6 col-lg-6 col-sm-6'>
-                            <label><strong>Description: </strong></label>
-                            <input className='form-control'
-                                name='description'
-                                id='description'
-                                value={form_data.description}
-                                onChange={handle_change}
-                            />
-                        </div>
-                        <div className='col-md-6 col-lg-6 col-sm-6'>
-                            <label><strong>Project ID: </strong></label>
-                            <input className='form-control'
-                                type='text'
-                                name='projectId'
-                                id='projectId'
-                                value={form_data.projectId} 
-                                onChange = {handle_change}
-                            />
-                        </div>
-                        <br/>
-                        <input className='btn btn-primary' type="submit" onClick={create_project} onChange = {handle_change}/>
-                    </form>
+                    <div className='col-md-6 col-lg-6 col-xs-6'>
+                        <h2>Create a new project</h2>
+                        <form>
+                            <div className='col-md-6 col-lg-6 col-sm-6'>
+                                <label><strong>Name: </strong></label>
+                                <input 
+                                    className='form-control' 
+                                    name='name'
+                                    id='name'
+                                    value={form_data.name}
+                                    onChange = {handle_change} 
+                                />
+                            </div>
+
+                            <div className='col-md-6 col-lg-6 col-sm-6'>
+                                <label><strong>Description: </strong></label>
+                                <input className='form-control'
+                                    name='description'
+                                    id='description'
+                                    value={form_data.description}
+                                    onChange={handle_change}
+                                />
+                            </div>
+                            <div className='col-md-6 col-lg-6 col-sm-6'>
+                                <label><strong>Project ID: </strong></label>
+                                <input className='form-control'
+                                    type='text'
+                                    name='projectId'
+                                    id='projectId'
+                                    value={form_data.projectId} 
+                                    onChange = {handle_change}
+                                />
+                            </div>
+                            <br/>
+                            <input className='btn btn-primary' type="submit" onClick={create_project} onChange = {handle_change}/>
+                        </form>
+                    </div>
+                    <div className='col-md-6 col-lg-6 col-xs-6'>
+                        <h2>Join Project</h2>
+                        <form>
+                            <div className='col-md-6 col-lg-6 col-sm-6'>
+                                <label><strong>Project ID: </strong></label>
+                                <input 
+                                    className='form-control' 
+                                    name='project_id'
+                                    id='project_id'
+                                    value={join_project_form.project_id}
+                                    onChange = {handle_change_for_join_project}
+                                />
+                                <br/>
+                            <input className='btn btn-warning' type="submit" onClick={join_project} onChange = {handle_change_for_join_project}/>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </center>
+        
         <div className='container'>
             <div className='row'>
                 <h1>Projects</h1>
@@ -172,6 +232,7 @@ export default function Projects() {
                                         <Link to={`/project/${project.pid}/members`} className='btn btn-warning'>Members</Link>
                                         <Link to={`/project/${project.pid}/${'check_in'}`} className='btn btn-danger'>Check In</Link>
                                         <Link to={`/project/${project.pid}/${'check_out'}`} className='btn btn-primary'>Check Out</Link>
+                                        <Link to={`/project/${project.pid}/transactions`} className='btn btn-success'>Transactions</Link>
                                     </td>
                                 </tr>
                             ))}

@@ -7,6 +7,7 @@ export default function Login() {
     const navigate = useNavigate();
     const server_url = 'http://localhost:5000'
     const api_url = '/auth/v1/users/sign_in'
+    const user_id = localStorage.getItem('user_id')
     const [form_data, set_form_data] = React.useState({
         'email': "",
         'password':"",
@@ -49,6 +50,14 @@ export default function Login() {
             }
         })
     }
+
+    React.useEffect(() => {
+        if (user_id) {
+            navigate('/projects')
+        } else {
+            
+        }
+    })
 
     return(
         <center>
