@@ -34,7 +34,7 @@ export default function Navbar() {
                     <Link className="nav-link" to="/projects">Projects</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="#" onClick={logout}>Logout</Link>
+                    <Link className="nav-link" to="/" onClick={logout}>Logout</Link>
                   </li>
                 </>
               ) : (

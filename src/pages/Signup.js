@@ -1,56 +1,131 @@
 import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ServerContext } from '../App';
 
 export default function Signup() {
 
+    const user_id = localStorage.getItem('user_id')
     const navigate = useNavigate();
-    const server_url = 'http://localhost:5000'
+    const server_url = React.useContext(ServerContext)
     const api_url = '/auth/v1/users/sign_up'
-    
+    const [alertInfo, setAlertInfo] = React.useState({ show: false, message: "", type: "" });
     const [form_data, set_form_data] = React.useState(
         {
-        'name': "",
-        'email': "",
-        'password':"",
-        'confirm_password': ""
+            'name': "",
+            'email': "",
+            'password':"",
+            'confirm_password': ""
         }
     )
 
-    
+    const [errors, set_errors] = useState({
+            'name': "",
+            'email': "",
+            'password': "",
+            'confirm_password': "",
+            'form': ""
+        }
+    );
+
+    // adding this hook to check if user is already logged in then take user to projects page
+    React.useEffect(() => {
+        if (user_id) {
+            navigate('/projects')
+        } else {
+            
+        }
+    });
 
     function handle_change(event) {
+        // update the form object with data entered by the user
         const { name, value } = event.target;
         set_form_data((prev_data) => ({
           ...prev_data,
           [name]: value
         }));
+
+        // Validate inputs
+        let error = "";
+        if (value.trim() === "") {
+            error = `${name.replace("_", " ")} is required.`;
+        } else if (name === "confirm_password" && value !== form_data.password) {
+            error = "Passwords do not match.";
+        } else if (name === "password" && form_data.confirm_password && value !== form_data.confirm_password) {
+            error = "Passwords do not match.";
+        }
+        // since we are maintaining the errors hash too so need to updated errors too.
+        // this will not be needed if we decide to show just one string of errors 
+        // instead of highlighting each form field with error
+        set_errors((prev_errors) => ({
+            ...prev_errors,
+            [name]: error,
+            form: ""
+        }));
+    }
+
+    
+    function validate_form() {
+        let valid = true;
+        let new_errors = {};
+    
+        Object.keys(form_data).forEach((key) => {
+          if (form_data[key].trim() === "") {
+            new_errors[key] = `${key.replace("_", " ")} is required.`;
+            valid = false;
+          }
+        });
+    
+        if (form_data.password !== form_data.confirm_password) {
+          new_errors.password = "Passwords do not match.";
+          new_errors.confirm_password = "Passwords do not match.";
+          valid = false;
+        }
+    
+        set_errors((prev_errors) => ({
+          ...prev_errors,
+          ...new_errors
+        }));
+    
+        return valid;
     }
 
     
 
     function create_user(event) {
         event.preventDefault();
-        fetch(`${server_url}/${api_url}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: form_data['email'],
-                name: form_data['name'],
-                password: form_data['password'],
-                confirm_password: form_data['confirm_password']
+        if (validate_form()) {
+            fetch(`${server_url}/${api_url}`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: form_data['email'],
+                    name: form_data['name'],
+                    password: form_data['password'],
+                    confirm_password: form_data['confirm_password']
+                })
+            }).then(res => {
+                if (!res.ok) {
+                    throw new Error("API has thrown an error")
+                }else {
+                    return res.json()
+                }
+            }).then((res) => {
+                if (res && (res.success == true)) {
+                    setAlertInfo({ show: true, message: "Signed up successfully", type: "success" });
+                    localStorage.setItem('user_id', res.id)
+                    navigate('/projects')
+                } else {
+                    setAlertInfo({ show: true, message: res.errors, type: "danger" });
+                }
             })
-        }).then(res => {
-            if (!res.ok) {
-                throw new Error("API has thrown an error")
-            }
-            alert("Sign up Successfully")
-            return res.json()
-        }).then(() => {
-            // Redirect to the login page
-            navigate('/login');
-          })
+        } else {
+            set_errors((prev_errors) => ({
+                ...prev_errors,
+                form: "Please fix the errors."
+            }));
+        }
     }
 
     return(
@@ -69,6 +144,7 @@ export default function Signup() {
                                 value={form_data.name}
                                 onChange = {handle_change} 
                             />
+                            {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
                         </div>
 
                         <div className='col-md-6 col-lg-6 col-sm-6'>
@@ -79,6 +155,7 @@ export default function Signup() {
                                 value={form_data.email}
                                 onChange={handle_change}
                             />
+                            {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
                         </div>
                         <div className='col-md-6 col-lg-6 col-sm-6'>
                             <label><strong>Password: </strong></label>
@@ -89,6 +166,7 @@ export default function Signup() {
                                 value={form_data.password} 
                                 onChange = {handle_change}
                             />
+                            {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
                         </div>
 
                         <div className='col-md-6 col-lg-6 col-sm-6'>
@@ -100,6 +178,7 @@ export default function Signup() {
                                 value={form_data.confirm_password}
                                 onChange = {handle_change}
                             />
+                            {errors.confirm_password && <p style={{ color: 'red' }}>{errors.confirm_password}</p>}
                         </div>
                         <br/>
                         <br/>

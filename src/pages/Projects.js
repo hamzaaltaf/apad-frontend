@@ -51,30 +51,30 @@ export default function Projects() {
         if (!user_id) {
             navigate('/login')
         } else {
-            fetch('http://localhost:5000/users/list_projects', {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user_id: user_id
+            fetch(`${server_url}/users/list_projects`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: user_id
+                })
             })
-        })
-        .then(res => {
-            if (!res.ok) {
-                alert("Request failed")
-                navigate('/login');
-                
-            } else {
-                return res.json()
-            }
-        }).then((res) => {
-            if (res && (res.success == true)) {
-                set_projects((prev_projects) => res.projects)
-            } else {
-                setAlertInfo({ show: true, message: res.errors, type: "danger" });
-            }
-        })
+            .then(res => {
+                if (!res.ok) {
+                    setAlertInfo({ show: true, message: "API failed.", type: "danger" });
+                    navigate('/login');
+                    
+                } else {
+                    return res.json()
+                }
+            }).then((res) => {
+                if (res && (res.success == true)) {
+                    set_projects((prev_projects) => res.projects)
+                } else {
+                    setAlertInfo({ show: true, message: res.errors, type: "danger" });
+                }
+            })
         }
         
     }, [project_created])
