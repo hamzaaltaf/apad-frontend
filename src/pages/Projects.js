@@ -7,7 +7,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 export default function Projects() {
     const navigate = useNavigate();
-    const server_url = 'http://localhost:5000/'
+    const server_url = 'http://localhost:8000/'
     const user_id = localStorage.getItem('user_id')
     const api_url = `users/create_project`
     const [projects, set_projects] = React.useState([])
