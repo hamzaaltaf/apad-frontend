@@ -152,7 +152,7 @@ export default function HardwareSets() {
                                         <td>{set.availability}</td>
                                         <td>{set.checked_out}</td>
                                         <td>{set.checked_in}</td>
-                                        <td>{set.capacity - set.checked_in}</td>
+                                        <td>{set.capacity - set.checked_out}</td>
                                         
                                     </tr>
                                 ))}
@@ -166,7 +166,7 @@ export default function HardwareSets() {
                 <br/>
                 <form>
                 <center>
-                    <h2>Check In Form</h2>
+                    <h2>{params.action_type == 'check_in' ? 'Check In Form' : 'Check Out Form'}</h2>
                 </center>
                 <div className='col-md-6 col-lg-6 col-sm-6'>
                         <label><strong>Hardware ID: </strong></label>

@@ -3,11 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
+import { ServerContext } from '../App';
 
 
 export default function Projects() {
     const navigate = useNavigate();
-    const server_url = 'http://localhost:5000/'
+    // const server_url = 'http://localhost:5000/'
+    const server_url = React.useContext(ServerContext)
     const user_id = localStorage.getItem('user_id')
     const api_url = `users/create_project`
     const [projects, set_projects] = React.useState([])
