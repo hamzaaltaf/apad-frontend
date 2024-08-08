@@ -8,7 +8,7 @@ export default function Login() {
     const { isAuthenticated, login } = useContext(AuthContext);
     const navigate = useNavigate();
     const server_url = React.useContext(ServerContext)
-    // const server_url = 'http://localhost:5000'
+    //const server_url = 'http://localhost:8000'
     const api_url = '/auth/v1/users/sign_in'
     const user_id = localStorage.getItem('user_id')
     const [alertInfo, setAlertInfo] = React.useState({ show: false, message: "", type: "" });
@@ -87,9 +87,12 @@ export default function Login() {
                     setAlertInfo({ show: true, message: response.errors, type: "danger" });
                 } else {
                     setAlertInfo({ show: true, message: "Logged in Successfully", type: "success" });
-                    login(response.id)
-                    // Redirect to the projects page
-                    navigate('/projects')
+                    login(response.id);
+                    if (response.role == "admin"){
+                        navigate('/HardwareManage')
+                    } else {
+                        navigate('/projects')
+                    }
                 }
             })
         } else {

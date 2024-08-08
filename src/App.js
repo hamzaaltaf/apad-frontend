@@ -14,6 +14,7 @@ import Signup from './pages/Signup';
 import Projects from './pages/Projects';
 import ProjectMembers from './pages/ProjectMembers';
 import HardwareSets from './pages/HardwareSets';
+import HardwareManage from './pages/HardwareManage';
 import Transactions from './pages/Transactions';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -21,7 +22,7 @@ import { AuthProvider } from './contexts/AuthContext';
 const ServerContext = React.createContext()
 function App() {
   const user_id = localStorage.getItem('user_id')
-  // const server_url = 'http://localhost:8000'
+  //const server_url = 'http://localhost:8000'
   const server_url = 'https://hardr-api-61fbbb441ef1.herokuapp.com/'
   return (
     
@@ -35,6 +36,7 @@ function App() {
             <Route path="/login" element={<Login/>}></Route>
             <Route path="/signup" element={<Signup/>}></Route>
             <Route path="/projects" element={<Projects/>}></Route>
+            <Route path="/HardwareManage" element={<HardwareManage/>}></Route>
             <Route path="/project/:id/members" element={<ProjectMembers/>}></Route>
             <Route path="/project/:id/:action_type" element={<HardwareSets/>}></Route>
             <Route path="/project/:id/:action_type" element={<HardwareSets/>}></Route>
