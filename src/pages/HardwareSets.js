@@ -14,7 +14,7 @@ export default function HardwareSets() {
 
     React.useEffect(() => {
         // add the if user_id not found redirect to the login page
-        fetch(`${server_url}/list_sets`, {
+        fetch(`${server_url}/list_sets?user=${user_id}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
