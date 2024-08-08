@@ -21,7 +21,8 @@ import { AuthProvider } from './contexts/AuthContext';
 const ServerContext = React.createContext()
 function App() {
   const user_id = localStorage.getItem('user_id')
-  const server_url = 'http://localhost:5000'
+  // const server_url = 'http://localhost:8000'
+  const server_url = 'https://hardr-api-61fbbb441ef1.herokuapp.com/'
   return (
     
     <BrowserRouter>
