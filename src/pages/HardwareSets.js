@@ -10,6 +10,7 @@ export default function HardwareSets() {
     const [alert, setAlert] = React.useState({ show: false, message: "", type: "" });
     const user_id = localStorage.getItem('user_id')
     const [hardware_sets, set_hardware_sets] = React.useState([])
+    const [performed_an_action, set_performed_an_action] = React.useState(false)
     const server_url = React.useContext(ServerContext)
 
     React.useEffect(() => {
@@ -37,7 +38,7 @@ export default function HardwareSets() {
                 setAlert({ show: true, message: res.errors, type: "danger" });
             }
         })
-        }, [])
+        }, [performed_an_action])
 
         /** Code related to check out form */
         const [form_data, set_form_data] = React.useState({
@@ -79,6 +80,7 @@ export default function HardwareSets() {
                     setAlert({ show: true, message: response.errors, type: "danger" });
                 } else {
                     setAlert({ show: true, message: 'Item checked in successfully', type: "success" });
+                    set_performed_an_action((prev_action) => !prev_action)
                 }
             })
         }
@@ -106,6 +108,7 @@ export default function HardwareSets() {
                     setAlert({ show: true, message: response.errors, type: "danger" });
                 } else {
                     setAlert({ show: true, message: 'Item checked out successfully', type: "success" });
+                    set_performed_an_action((prev_action) => !prev_action)
                 }
             })
         }
@@ -138,10 +141,8 @@ export default function HardwareSets() {
                                     <th>Name</th>
                                     <th>Capacity</th>
                                     <th>Availability</th>
-                                    <th>Checked Out</th>
-                                    <th>Checked In</th>
-                                    <th>Remaining</th>
-                                    
+                                    {/* <th>Checked Out</th>
+                                    <th>Checked In</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -150,10 +151,8 @@ export default function HardwareSets() {
                                         <td>{set.name}</td>
                                         <td>{set.capacity}</td>
                                         <td>{set.availability}</td>
-                                        <td>{set.checked_out}</td>
-                                        <td>{set.checked_in}</td>
-                                        <td>{set.capacity - set.checked_out}</td>
-                                        
+                                        {/* <td>{set.checked_out}</td>
+                                        <td>{set.checked_in}</td> */}
                                     </tr>
                                 ))}
                             </tbody>

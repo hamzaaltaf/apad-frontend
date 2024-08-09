@@ -220,9 +220,6 @@ export default function Projects() {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>T.Checked Out</th>
-                                <th>T.Checked In</th>
-                                <th>Pending</th>
                                 <th>Description</th>
                                 <th>Actions</th>
                             </tr>
@@ -232,9 +229,6 @@ export default function Projects() {
                                 <tr key={project.pid}>
                                     <td>{project.pid}</td>
                                     <td>{project.name}</td>
-                                    <td>{project.total_checked_out}</td>
-                                    <td>{project.total_checked_in}</td>
-                                    <td>{project.total_checked_out - project.total_checked_in}</td>
                                     <td>{project.description}</td>
                                     <td>
                                         <Link to={`/project/${project.pid}/members`} className='btn btn-warning'>Members</Link>
